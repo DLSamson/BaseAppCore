@@ -7,15 +7,27 @@
     <title>App Base JS Setup</title>
 
     <link rel="stylesheet" href="style.css">
-    <script src="app.js"></script>
+    <script src="app.js" async></script>
 </head>
 
 <body>
     <div class="wrapper">
         <section>
-            <div class="hero">
-                <div class="container">
+            <div class="container">
+                <div class="hero">
                     <h1 class="slideInLeft">App Base JS Setup</h1>
+
+
+                    <div class="card" x-data="open">
+                        <button class="btn primary" @click="toggle">Toggle</button>
+                        <div x-show="show" x-transition x-cloak>Open</div>
+                    </div>
+
+                    <div class="card" x-data="counter">
+                        <button class="btn primary" @click="increment">+</button>
+                        <p x-text="count"></p>
+                        <button class="btn primary" @click="decrement">-</button>
+                    </div>
                 </div>
             </div>
         </section>
