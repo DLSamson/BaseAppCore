@@ -37,7 +37,7 @@ class App {
         document.readyState === 'loading'
             ? document.addEventListener('DOMContentLoaded', fn)
             : fn();
-        
+
         return this;
     };
 
@@ -88,7 +88,9 @@ class App {
             link.href = url;
             link.onload = resolve;
             link.onerror = reject;
-            document.head.appendChild(link);
+            document.head.firstChild
+                ? document.head.insertBefore(link, document.head.firstChild)
+                : document.head.appendChild(link);
         });
     }
 
@@ -107,13 +109,20 @@ class App {
         },
         skeletonCss: {
             js: [],
-            css: ['https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css'],
+            css: [
+                'https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css',
+                'https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css',
+            ],
+        },
+        highlight: {
+            js: ['https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'],
+            css: ['https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css'],
         }
     }
 
     getModules = () => Object.keys(this._modules);
 
-    /** @param {string[]} keys */
+    /** @param {Array<keyof typeof this._modules>} keys */
     loadModules(keys) {
         keys.forEach(key => {
             const { js, css } = this._modules[key];
@@ -133,56 +142,3 @@ class App {
     }
     // #endregion
 }
-
-const initSomething = (log) => {
-    setTimeout(() => {
-        log('Something is happening...');
-    }, 50000);
-}
-
-const showLogs = () => {
-    if (!app.debug) return;
-    console.log(app.loggers);
-}
-
-const toggler = (log) => Alpine.data('open', () => ({
-    log: log,
-    show: false,
-    toggle() {
-        this.show = !this.show;
-    },
-    close() {
-        this.show = false;
-    }
-}));
-
-const counter = (log) => Alpine.data('counter', () => ({
-    log: log,
-    count: 0,
-    increment() {
-        this.count++;
-    },
-    decrement() {
-        this.count--;
-    }
-}))
-
-
-const app = new App();
-
-app
-    .loadModules(['jquery', 'alpine', 'axios', 'skeletonCss'])
-    .ready({
-        utils: [
-            initSomething,
-        ],
-        logs: [
-            showLogs,
-        ],
-    })
-    .alpineReady({
-        utils: [
-            toggler,
-            counter
-        ],
-    });
